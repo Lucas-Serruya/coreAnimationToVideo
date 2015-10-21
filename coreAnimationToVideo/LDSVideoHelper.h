@@ -11,6 +11,6 @@
 
 @interface LDSVideoHelper : NSObject
 
-+ (void)createVideoVoidToPath:(NSString*)path durationInSeconds:(int)duration size:(CGSize)videoSize withCompletion:(void (^)(AVAssetWriter * asset))callbackBlock;
++ (void)createVideoVoidToPath:(NSString*)path durationInSeconds:(int)duration size:(CGSize)videoSize withCompletion:(void (^)(void))callbackBlock;
 
 @end

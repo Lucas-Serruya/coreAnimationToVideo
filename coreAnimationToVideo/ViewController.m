@@ -123,7 +123,7 @@
     return CGRectMake(rect.origin.x + point.x, rect.origin.y + point.y, rect.size.width, rect.size.height);
 }
 
-- (void)videoOutputWorkingWithAsset:(AVAssetWriter *)asset
+- (void)videoOutputWorking
 {
     // 1 - Early exit if there's no video file selected
     AVAsset *videoAsset = [AVAsset assetWithURL:[NSURL fileURLWithPath:self.myPathDocs]];
@@ -250,8 +250,8 @@
     
     NSLog(@"video saved in path: %@", self.myPathDocs);
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    [LDSVideoHelper createVideoVoidToPath:self.myPathDocs durationInSeconds:50 size:screenRect.size withCompletion:^(AVAssetWriter *asset) {
-        [self videoOutputWorkingWithAsset:asset];
+    [LDSVideoHelper createVideoVoidToPath:self.myPathDocs durationInSeconds:50 size:screenRect.size withCompletion:^() {
+        [self videoOutputWorking];
     }];
 }
 

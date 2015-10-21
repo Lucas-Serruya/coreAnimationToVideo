@@ -12,7 +12,7 @@
 @implementation LDSVideoHelper
 
 //creamos un video en xPath con xDuracion (en decimos de segundo), el video por defecto tiene el tamaño de la pantalla, esto cambiarlo mas adelante segun especificaciones
-+ (void)createVideoVoidToPath:(NSString*)path durationInSeconds:(int)duration size:(CGSize)videoSize withCompletion:(void (^)(AVAssetWriter * asset))callbackBlock
++ (void)createVideoVoidToPath:(NSString*)path durationInSeconds:(int)duration size:(CGSize)videoSize withCompletion:(void (^)(void))callbackBlock
 {
     duration = duration*20;//paso de los segundos que vienen a su equivalente en escala que es 20 frames por segundo
     int numberOfFrames = duration; //Cada frame ocupa un decimo de segundo (1/20)
@@ -83,7 +83,7 @@
                 [videoWriter finishWritingWithCompletionHandler:^{
                     NSLog(@"GRABADOOO");
                     NSLog(@"%ld", (long)videoWriter.status);
-                    callbackBlock(videoWriter);
+                    callbackBlock();
                 }];
                 
                 CVPixelBufferPoolRelease(adaptor.pixelBufferPool);
