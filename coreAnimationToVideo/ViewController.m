@@ -37,6 +37,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    
     [self createAnimatedMovie];
 }
 
@@ -65,7 +66,7 @@
     
     // 3 - Video track
     AVMutableCompositionTrack *videoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
-                                                                        preferredTrackID:kCMPersistentTrackID_Invalid];
+                                                                        preferredTrackID:kCVPixelFormatType_32ARGB];
     [videoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration)
                         ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0]
                          atTime:kCMTimeZero error:nil];
@@ -125,9 +126,7 @@
     NSString *myPathDocs =  [documentsDirectory stringByAppendingPathComponent:
                              [NSString stringWithFormat:@"FinalVideo-%d.mov",arc4random() % 1000]];
     NSURL *url = [NSURL fileURLWithPath:myPathDocs];
-    
-    
-    
+
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition
                                                                       presetName:AVAssetExportPresetHighestQuality];
     exporter.outputURL=url;
@@ -176,42 +175,47 @@
 - (void)applyVideoEffectsToComposition:(AVMutableVideoComposition *)composition size:(CGSize)size
 {
     // create animations
-    [self addAnimationToView:self.questionLabel fromPoint:CGPointMake(0, -250) withDuration:0.5 delay:0];
-    [self addAnimationToView:self.answer1Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.2];
-    [self addAnimationToView:self.answer2Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.4];
-    [self addAnimationToView:self.answer3Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.6];
-    [self addAnimationToView:self.answer4Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.8];
     
     // add animations to video Layer
+
+    
     CALayer *parentLayer = [CALayer layer];
     CALayer *videoLayer = [CALayer layer];
     parentLayer.frame = CGRectMake(0, 0, size.width, size.height);
     videoLayer.frame = CGRectMake(0, 0, size.width, size.height);
     [parentLayer addSublayer:videoLayer];
-    [parentLayer addSublayer:[self.questionLabel layer]];
-    [parentLayer addSublayer:[self.answer1Label layer]];
-    [parentLayer addSublayer:[self.answer2Label layer]];
-    [parentLayer addSublayer:[self.answer3Label layer]];
-    [parentLayer addSublayer:[self.answer4Label layer]];
+//    [parentLayer addSublayer:[self addAnimationToView:self.questionLabel fromPoint:CGPointMake(0, -250) withDuration:0.5 delay:0]];
+//    [parentLayer addSublayer:[self addAnimationToView:self.answer1Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.2]];
+//    [parentLayer addSublayer:[self addAnimationToView:self.answer2Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.4]];
+//    [parentLayer addSublayer:[self addAnimationToView:self.answer3Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.6]];
+//    [parentLayer addSublayer:[self addAnimationToView:self.answer4Label fromPoint:CGPointMake(self.view.bounds.size.width, 0) withDuration:10 delay:0.8]];
+    
+    
+    CALayer *addLayer = [CALayer new];
+    addLayer.frame = CGRectMake(40, 40, self.view.frame.size.width/4, self.view.frame.size.height/4);
+    addLayer.backgroundColor = [[UIColor greenColor] CGColor];
+    [parentLayer addSublayer:addLayer];
     
     composition = [AVMutableVideoComposition videoComposition];
     composition.animationTool = [AVVideoCompositionCoreAnimationTool videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
 }
 
-- (void)addAnimationToView:(UIView *)view fromPoint:(CGPoint)point withDuration:(CFTimeInterval)duration delay:(CFTimeInterval)delay {
+- (CALayer *)addAnimationToView:(UIView *)view fromPoint:(CGPoint)point withDuration:(CFTimeInterval)duration delay:(CFTimeInterval)delay {
+    return view.layer;
     CGPoint viewOrigin = CGPointMake(view.layer.position.x + point.x, view.layer.position.y + point.y);
     view.layer.position = viewOrigin;
     CGPoint viewEnd = CGPointMake(viewOrigin.x - point.x, viewOrigin.y - point.y);
     CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
     anim.fromValue  = [NSValue valueWithCGPoint:viewOrigin];
-    anim.toValue    = [NSValue valueWithCGPoint:viewEnd];
+    anim.toValue    = [NSValue valueWithCGPoint: CGPointMake(140, viewOrigin.y - point.y)];
     anim.duration   = duration;
     anim.beginTime  = CACurrentMediaTime() + delay;
     anim.removedOnCompletion = true;
-    anim.repeatCount = 1;
+    anim.repeatCount = 1999999;
     anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     [view.layer addAnimation:anim forKey:@"position"];
     view.layer.position = viewEnd;
+    return view.layer;
 }
 
 

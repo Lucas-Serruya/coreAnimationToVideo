@@ -14,12 +14,12 @@
 //creamos un video en xPath con xDuracion (en decimos de segundo), el video por defecto tiene el tamaño de la pantalla, esto cambiarlo mas adelante segun especificaciones
 + (void)createVideoVoidToPath:(NSString*)path durationInSeconds:(int)duration size:(CGSize)videoSize withCompletion:(void (^)(void))callbackBlock
 {
-    duration = duration*20;//paso de los segundos que vienen a su equivalente en escala que es 20 frames por segundo
+    duration = duration*60;//paso de los segundos que vienen a su equivalente en escala que es 20 frames por segundo
     int numberOfFrames = duration; //Cada frame ocupa un decimo de segundo (1/20)
     
     videoSize.height -= 21; //todo:remover esto cuando ya no use el screensize
     
-    UIImage *backImage = [self createImageWithColor:[UIColor purpleColor] size:CGSizeMake(videoSize.width, videoSize.height)];
+    UIImage *backImage = [self createImageWithColor:[UIColor grayColor] size:CGSizeMake(videoSize.width, videoSize.height)];
     NSError *error = nil;
     
     AVAssetWriter *videoWriter = [[AVAssetWriter alloc] initWithURL:[NSURL fileURLWithPath:path]
@@ -57,8 +57,8 @@
     {
         if(writerInput.readyForMoreMediaData){
             
-            CMTime frameTime = CMTimeMake(1, 20 );
-            CMTime lastTime=CMTimeMake(frameCount, 20);
+            CMTime frameTime = CMTimeMake(1, 60 );
+            CMTime lastTime=CMTimeMake(frameCount, 60);
             CMTime presentTime= CMTimeAdd(lastTime, frameTime);
             
             if (frameCount >= numberOfFrames)
@@ -106,7 +106,7 @@
     return UIGraphicsGetImageFromCurrentImageContext();
 }
 
-+ (CVPixelBufferRef) pixelBufferFromCGImage: (CGImageRef) image  size:(CGSize)imageSize
++ (CVPixelBufferRef) pixelBufferFromCGImage:(CGImageRef) image  size:(CGSize)imageSize
 {
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES], kCVPixelBufferCGImageCompatibilityKey,
